@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sevimli Tarz Odası - Giydirme Oyunu</title>
+    <style>
+        :root {
+            --pink-light: #ffe3ed;
+            --pink-main: #ff85a1;
+            --pink-dark: #f15bb5;
+            --purple: #9b5de5;
+            --bg-color: #fbf8cc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+        }
+
+        h1 {
+            color: var(--pink-dark);
+            text-shadow: 2px 2px #fff;
+            margin-bottom: 5px;
+        }
+
+        p {
+            margin-top: 0;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .game-container {
+            display: flex;
+            background: white;
+            border: 6px solid var(--pink-main);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+            gap: 20px;
+        }
+
+        /* Bebek Alanı */
+        .character-view {
+            flex: 1;
+            background: linear-gradient(to bottom, #e0f2fe, #f0fdf4);
+            border-radius: 16px;
+            position: relative;
+            min-height: 450px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border: 2px solid var(--pink-light);
+        }
+
+        .base-doll {
+            font-size: 150px;
+            position: absolute;
+            z-index: 1;
+            bottom: 40px;
+            user-select: none;
+        }
+
+        /* Giysi Katmanları */
+        .layer {
+            position: absolute;
+            font-size: 150px;
+            z-index: 2;
+            bottom: 40px;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        #layer-hair { z-index: 5; transform: translateY(-35px); }
+        #layer-top { z-index: 4; transform: translateY(5px); }
+        #layer-bottom { z-index: 3; transform: translateY(35px); }
+        #layer-shoes { z-index: 2; transform: translateY(75px); }
+
+        /* Gardırop Alanı */
+        .wardrobe {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            border-bottom: 2px solid var(--pink-light);
+            padding-bottom: 8px;
+        }
+
+        .tab-btn {
+            background: white;
+            border: 2px solid var(--pink-main);
+            color: var(--pink-dark);
+            padding: 8px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+            font-size: 14px;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--pink-main);
+            color: white;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .item-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 30px;
+            transition: 0.2s;
+        }
+
+        .item-card:hover {
+            border-color: var(--pink-dark);
+            background: var(--pink-light);
+            transform: scale(1.05);
+        }
+
+        /* Kontrol Butonları */
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: var(--purple);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #7b2cbf;
+            transition: 0.1s;
+        }
+
+        .action-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        .action-btn.reset {
+            background: #ff7096;
+            box-shadow: 0 4px 0 #ff477e;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>✨ Sevimli Tarz Odası ✨</h1>
+    <p>Kendi tarzını yarat ve bebeğini giydir!</p>
+
+    <div class="game-container">
+        <div class="character-view" id="character-view">
+            <div class="base-doll">👧🏼</div>
+            
+            <div id="layer-hair" class="layer"></div>
+            <div id="layer-top" class="layer"></div>
+            <div id="layer-bottom" class="layer"></div>
+            <div id="layer-shoes" class="layer"></div>
+        </div>
+
+        <div class="wardrobe">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="changeCategory('hair')">🎀 Saç</button>
+                <button class="tab-btn" onclick="changeCategory('top')">👚 Üst</button>
+                <button class="tab-btn" onclick="changeCategory('bottom')">👗 Alt</button>
+                <button class="tab-btn" onclick="changeCategory('shoes')">👟 Ayakkabı</button>
+            </div>
+
+            <div class="options-grid" id="options-container">
+                </div>
+
+            <div class="controls">
+                <button class="action-btn reset" onclick="resetDoll()">Sıfırla</button>
+                <button class="action-btn" onclick="randomStyle()">Rastgele Seç</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Oyun Verileri (Gerçek projede buralara görsel URL'leri gelecektir)
+        const wardrobeData = {
+            hair: [
+                { id: 'h1', icon: '👱🏻‍♀️' },
+                { id: 'h2', icon: '👩🏻‍🦰' },
+                { id: 'h3', icon: '👧🏻' },
+                { id: 'h4', icon: '🧑🏼‍🦱' }
+            ],
+            top: [
+                { id: 't1', icon: '👚' },
+                { id: 't2', icon: '👕' },
+                { id: 't3', icon: '🎽' },
+                { id: 't4', icon: '🧥' }
+            ],
+            bottom: [
+                { id: 'b1', icon: '👗' },
+                { id: 'b2', icon: '🩳' },
+                { id: 'b3', icon: '👖' },
+                { id: 'b4', icon: '🪡' }
+            ],
+            shoes: [
+                { id: 's1', icon: '👟' },
+                { id: 's2', icon: '👠' },
+                { id: 's3', icon: '🥿' },
+                { id: 's4', icon: '👢' }
+            ]
+        };
+
+        let currentCategory = 'hair';
+
+        // Kategoriyi Değiştirme Fonksiyonu
+        function changeCategory(category) {
+            currentCategory = category;
+            
+            // Aktif tab butonunu güncelle
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            renderOptions();
+        }
+
+        // Seçenekleri Ekrana Basma
+        function renderOptions() {
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            wardrobeData[currentCategory].forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                card.innerText = item.icon;
+                card.onclick = () => selectItem(currentCategory, item.icon);
+                container.appendChild(card);
+            });
+        }
+
+        // Bebeğe Kıyafet Giydirme
+        function selectItem(category, icon) {
+            const layer = document.getElementById(`layer-${category}`);
+            layer.innerText = icon;
+            
+            // Küçük bir giyinme efekti animasyonu
+            layer.style.transform += ' scale(1.2)';
+            setTimeout(() => {
+                // Orijinal pozisyon kodlarını koru
+                if(category === 'hair') layer.style.transform = 'translateY(-35px) scale(1)';
+                if(category === 'top') layer.style.transform = 'translateY(5px) scale(1)';
+                if(category === 'bottom') layer.style.transform = 'translateY(35px) scale(1)';
+                if(category === 'shoes') layer.style.transform = 'translateY(75px) scale(1)';
+            }, 150);
+        }
+
+        // Temizleme
+        function resetDoll() {
+            document.querySelectorAll('.layer').forEach(layer => layer.innerText = '');
+        }
+
+        // Rastgele Kombin
+        function randomStyle() {
+            Object.keys(wardrobeData).forEach(cat => {
+                const items = wardrobeData[cat];
+                const randomItem = items[Math.floor(Math.random() * items.length)];
+                selectItem(cat, randomItem.icon);
+            });
+        }
+
+        // İlk açılışta saç kategorisini yükle
+        renderOptions();
+    </script>
+</body>
+</html>
