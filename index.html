@@ -2,51 +2,330 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Three.js 3D Başlangıç 🎲</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlowUp & Care Tracker ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #000; }
-        canvas { width: 100%; height: 100% }
+        :root {
+            --bg-gradient: linear-gradient(135deg, #fff5f5 0%, #f3e5f5 100%);
+            --panel-bg: rgba(255, 255, 255, 0.75);
+            --text-main: #4a3740;
+            --regl-color: #ff8a98;
+            --skincare-color: #80deea;
+            --laser-color: #b39ddb;
+            --border-radius: 20px;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background: var(--bg-gradient);
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-container {
+            background: var(--panel-bg);
+            backdrop-filter: blur(15px);
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(165, 105, 189, 0.1);
+            max-width: 700px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        h1 {
+            font-family: 'Comfortaa', cursive;
+            text-align: center;
+            color: #6d4c5c;
+            margin-top: 0;
+            font-size: 2.2rem;
+        }
+
+        p.subtitle {
+            text-align: center;
+            font-size: 0.95rem;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+
+        /* --- BUTON SEÇİCİLER --- */
+        .category-selector {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .action-btn {
+            flex: 1;
+            border: none;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-regl { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+        .btn-regl.active { background-color: var(--regl-color); color: white; }
+
+        .btn-skincare { background-color: #e0f7fa; color: #00838f; border: 1px solid #b2ebf2; }
+        .btn-skincare.active { background-color: var(--skincare-color); color: white; }
+
+        .btn-laser { background-color: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7; }
+        .btn-laser.active { background-color: var(--laser-color); color: white; }
+
+        /* --- TAKVİM ALANI --- */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-weight: 600;
+            padding: 0 10px;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .day-name {
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+            opacity: 0.6;
+            padding-bottom: 5px;
+        }
+
+        .day-cell {
+            background: white;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #f3e5f5;
+            position: relative;
+        }
+
+        .day-cell:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .day-cell.other-month {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* --- AKTİF İŞARET PULLARI --- */
+        .indicators-container {
+            display: flex;
+            gap: 3px;
+            justify-content: center;
+            width: 100%;
+            min-height: 8px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot-regl { background-color: var(--regl-color); }
+        .dot-skincare { background-color: var(--skincare-color); }
+        .dot-laser { background-color: var(--laser-color); }
+
+        /* --- BİLGİ NOTU ALANI --- */
+        .info-panel {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            border: 1px dashed #b39ddb;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <div class="main-container">
+        <h1>GlowUp & Care ✨</h1>
+        <p class="subtitle">Modunu seç, takvime tıkla ve rutinini saniyeler içinde planla!</p>
+
+        <div class="category-selector">
+            <button class="action-btn btn-regl active" onclick="setMode('regl')">🌸 Regl Takibi</button>
+            <button class="action-btn btn-skincare" onclick="setMode('skincare')">🧴 Cilt Bakımı (BHA/Asit)</button>
+            <button class="action-btn btn-laser" onclick="setMode('laser')">⚡ Lazer Seansı</button>
+        </div>
+
+        <div class="calendar-header">
+            <button class="nav-btn" onclick="changeMonth(-1)">❮</button>
+            <span id="monthYearTitle">Temmuz 2026</span>
+            <button class="nav-btn" onclick="changeMonth(1)">❯</button>
+        </div>
+
+        <div>
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 5px;">
+                <div class="day-name">Pzt</div>
+                <div class="day-name">Sal</div>
+                <div class="day-name">Çar</div>
+                <div class="day-name">Per</div>
+                <div class="day-name">Cum</div>
+                <div class="day-name">Cmt</div>
+                <div class="day-name">Paz</div>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+
+        <div class="info-panel">
+            💡 <strong>İpucu:</strong> Yukarıdan hangi takibi yapmak istiyorsan o butona bas, ardından takvimde istediğin güne tıkla! Aynı güne birden fazla rutin ekleyebilirsin. Verilerin tarayıcına otomatik kaydedilir.
+        </div>
+    </div>
 
     <script>
-        // 1. Sahne ve Kamera Kurulumu
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        // --- 🧠 STATE MANAGEMENT (Veri Yönetimi) ---
+        let currentMode = 'regl'; // Başlangıç modu
+        let currentDate = new Date(); // Şu anki tarih (Temmuz 2026)
         
-        // 2. Renderer (Ekran Motoru)
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+        // Takvim verilerini tutan ana veri tabanı nesnesi
+        let trackerData = {}; 
 
-        // 3. 3D Obje Oluşturma (Burada hayvan yerine basit bir küp var)
-        const geometry = new THREE.BoxGeometry(2, 2, 2);
-        const material = new THREE.MeshStandardMaterial({ color: 0xff416c, roughness: 0.3 });
-        const cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
+        const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 
-        // 4. Işık Ekleme (Gerçekçilik için şart)
-        const light = new THREE.DirectionalLight(0xffffff, 1);
-        light.position.set(5, 5, 5).normalize();
-        scene.add(light);
-        scene.add(new THREE.AmbientLight(0x333333));
-
-        camera.position.z = 5;
-
-        // 5. Oyun/Simülasyon Döngüsü (Her saniye 60 kez çalışır)
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            // Objeyi sürekli döndürerek hareket veriyoruz
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
-            
-            renderer.render(scene, camera);
+        // --- 💾 LOCALSTORAGE ENTEGRASYONU ---
+        function saveToStorage() {
+            localStorage.setItem('glowup_tracker_data', JSON.stringify(trackerData));
         }
-        animate();
+
+        function loadFromStorage() {
+            const saved = localStorage.getItem('glowup_tracker_data');
+            if (saved) {
+                trackerData = JSON.parse(saved);
+            }
+        }
+
+        // Mod Değiştirme Fonksiyonu (Regl, Cilt, Lazer arası geçiş)
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.action-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.btn-${mode}`).classList.add('active');
+        }
+
+        // Ay Değiştirme Fonksiyonu
+        function changeMonth(direction) {
+            currentDate.setMonth(currentDate.getMonth() + direction);
+            renderCalendar();
+        }
+
+        // --- 🗓️ TAKVİM OLUŞTURMA MOTORU ---
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = ''; // Grid'i temizle
+
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            // Başlık Güncelleme
+            document.getElementById('monthYearTitle').innerText = `${monthNames[month]} ${year}`;
+
+            // Ayın ilk gününün haftanın hangi gününe denk geldiğini bulma
+            let firstDayIndex = new Date(year, month, 1).getDay();
+            // Pazartesi gününü haftanın ilk günü yapmak için index ayarı (Pazarı 0'dan 7'ye çekiyoruz)
+            if (firstDayIndex === 0) firstDayIndex = 7; 
+
+            // Ayın toplam kaç gün çektiğini bulma
+            const totalDays = new Date(year, month + 1, 0).getDate();
+
+            // Boşlukları doldurma (Önceki aydan kalan günler için)
+            for (let i = 1; i < firstDayIndex; i++) {
+                let emptyCell = document.createElement('div');
+                emptyCell.className = 'day-cell other-month';
+                grid.appendChild(emptyCell);
+            }
+
+            // Gerçek Gün Hücrelerini Oluşturma
+            for (let day = 1; day <= totalDays; day++) {
+                let cell = document.createElement('div');
+                cell.className = 'day-cell';
+                cell.innerText = day;
+
+                // Her gün için benzersiz bir ID/Key oluşturuyoruz (Örn: "2026-6-10")
+                let dateKey = `${year}-${month}-${day}`;
+
+                // Eğer o güne ait kayıtlı veri varsa pulları (noktaları) yerleştir
+                let indicatorsContainer = document.createElement('div');
+                indicatorsContainer.className = 'indicators-container';
+                
+                if (trackerData[dateKey]) {
+                    if (trackerData[dateKey].regl) indicatorsContainer.innerHTML += '<span class="dot dot-regl"></span>';
+                    if (trackerData[dateKey].skincare) indicatorsContainer.innerHTML += '<span class="dot dot-skincare"></span>';
+                    if (trackerData[dateKey].laser) indicatorsContainer.innerHTML += '<span class="dot dot-laser"></span>';
+                }
+                cell.appendChild(indicatorsContainer);
+
+                // GÜNE TIKLANDIĞINDA ÇALIŞACAK MEKANİZMA
+                cell.onclick = function() {
+                    if (!trackerData[dateKey]) {
+                        trackerData[dateKey] = { regl: false, skincare: false, laser: false };
+                    }
+
+                    // Aktif moda göre durumu tersine çevir (Aç/Kapat)
+                    trackerData[dateKey][currentMode] = !trackerData[dateKey][currentMode];
+
+                    // Eğer o güne ait hiçbir şey kalmadıysa nesneden sil (Veri temizliği)
+                    if (!trackerData[dateKey].regl && !trackerData[dateKey].skincare && !trackerData[dateKey].laser) {
+                        delete trackerData[dateKey];
+                    }
+
+                    // Küçük bir kutlama efekti (Sadece ekleme yapıldığında patlar)
+                    if (trackerData[dateKey] && trackerData[dateKey][currentMode]) {
+                        confetti({ particleCount: 30, angle: 90, spread: 45, origin: { y: 0.85 } });
+                    }
+
+                    saveToStorage();
+                    renderCalendar(); // Takvimi anında güncelle
+                };
+
+                grid.appendChild(cell);
+            }
+        }
+
+        // Uygulamayı Başlat
+        loadFromStorage();
+        renderCalendar();
     </script>
 </body>
 </html>
