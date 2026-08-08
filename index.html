@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlowUp & Care Tracker ✨</title>
+    <title>GlowUp Club & Journal ✨</title>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #fff5f5 0%, #f3e5f5 100%);
-            --panel-bg: rgba(255, 255, 255, 0.75);
+            --panel-bg: rgba(255, 255, 255, 0.85);
             --text-main: #4a3740;
             --regl-color: #ff8a98;
             --skincare-color: #80deea;
@@ -26,7 +26,6 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
         }
 
         .main-container {
@@ -35,7 +34,7 @@
             padding: 30px;
             border-radius: 30px;
             box-shadow: 0 10px 30px rgba(165, 105, 189, 0.1);
-            max-width: 700px;
+            max-width: 900px;
             width: 100%;
             border: 1px solid rgba(255, 255, 255, 0.6);
         }
@@ -52,7 +51,33 @@
             text-align: center;
             font-size: 0.95rem;
             opacity: 0.8;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+        }
+
+        /* --- KULLANICI SEÇİCİ --- */
+        .user-selector {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.5);
+            padding: 10px;
+            border-radius: 15px;
+        }
+
+        .user-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .user-badge.active {
+            border-color: #6d4c5c;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         /* --- BUTON SEÇİCİLER --- */
@@ -60,7 +85,7 @@
             display: flex;
             justify-content: space-around;
             gap: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .action-btn {
@@ -77,7 +102,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .btn-regl { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
@@ -110,7 +135,7 @@
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 25px;
         }
 
@@ -131,7 +156,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 6px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.2s;
             border: 1px solid #f3e5f5;
@@ -148,18 +173,18 @@
             cursor: not-allowed;
         }
 
-        /* --- AKTİF İŞARET PULLARI --- */
         .indicators-container {
             display: flex;
-            gap: 3px;
+            gap: 2px;
             justify-content: center;
             width: 100%;
             min-height: 8px;
+            flex-wrap: wrap;
         }
 
         .dot {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             display: inline-block;
         }
@@ -167,33 +192,86 @@
         .dot-skincare { background-color: var(--skincare-color); }
         .dot-laser { background-color: var(--laser-color); }
 
-        /* --- BİLGİ NOTU ALANI --- */
-        .info-panel {
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: var(--border-radius);
-            padding: 15px;
-            border: 1px dashed #b39ddb;
-            font-size: 0.85rem;
-            line-height: 1.5;
+        /* --- DERGİ & MAKALELER (JOURNAL) --- */
+        .magazine-section {
+            margin-top: 35px;
+            border-top: 2px dashed #e1bee7;
+            padding-top: 25px;
+        }
+
+        .section-title {
+            font-family: 'Comfortaa', cursive;
+            color: #6d4c5c;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
             text-align: center;
+        }
+
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .article-card {
+            background: white;
+            padding: 18px;
+            border-radius: 15px;
+            border: 1px solid #f3e5f5;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+
+        .article-card h3 {
+            margin-top: 0;
+            font-size: 1rem;
+            color: #8e24aa;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .article-card p {
+            font-size: 0.82rem;
+            line-height: 1.5;
+            color: #555;
+            margin-bottom: 0;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #ffe0b2;
+            color: #e65100;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+            margin-bottom: 8px;
         }
     </style>
 </head>
 <body>
 
     <div class="main-container">
-        <h1>GlowUp & Care ✨</h1>
-        <p class="subtitle">Modunu seç, takvime tıkla ve rutinini saniyeler içinde planla!</p>
+        <h1>GlowUp Club ✨</h1>
+        <p class="subtitle">Kişisel ajandanız, ortak takip alanınız ve bakım rehberiniz.</p>
+
+        <!-- KULLANICI SEÇİM ALANI -->
+        <div class="user-selector">
+            <div class="user-badge active" style="background: #ffe1e6;" onclick="setUser('Kullanıcı 1')">🌸 1. Kız</div>
+            <div class="user-badge" style="background: #e1f5fe;" onclick="setUser('Kullanıcı 2')">💧 2. Kız</div>
+            <div class="user-badge" style="background: #f3e5f5;" onclick="setUser('Kullanıcı 3')">✨ 3. Kız</div>
+            <div class="user-badge" style="background: #e8f5e9;" onclick="setUser('Kullanıcı 4')">🌿 4. Kız</div>
+        </div>
 
         <div class="category-selector">
             <button class="action-btn btn-regl active" onclick="setMode('regl')">🌸 Regl Takibi</button>
-            <button class="action-btn btn-skincare" onclick="setMode('skincare')">🧴 Cilt Bakımı (BHA/Asit)</button>
+            <button class="action-btn btn-skincare" onclick="setMode('skincare')">🧴 Cilt Bakımı</button>
             <button class="action-btn btn-laser" onclick="setMode('laser')">⚡ Lazer Seansı</button>
         </div>
 
         <div class="calendar-header">
             <button class="nav-btn" onclick="changeMonth(-1)">❮</button>
-            <span id="monthYearTitle">Temmuz 2026</span>
+            <span id="monthYearTitle">Ağustos 2026</span>
             <button class="nav-btn" onclick="changeMonth(1)">❯</button>
         </div>
 
@@ -210,82 +288,104 @@
             <div class="calendar-grid" id="calendarGrid"></div>
         </div>
 
-        <div class="info-panel">
-            💡 <strong>İpucu:</strong> Yukarıdan hangi takibi yapmak istiyorsan o butona bas, ardından takvimde istediğin güne tıkla! Aynı güne birden fazla rutin ekleyebilirsin. Verilerin tarayıcına otomatik kaydedilir.
+        <!-- DERGİ / REHBER BÖLÜMÜ -->
+        <div class="magazine-section">
+            <div class="section-title">📖 GlowUp Ajanda & Sağlık Rehberi</div>
+            <div class="articles-grid">
+                
+                <div class="article-card">
+                    <span class="tag">Sağlık & Ağrı</span>
+                    <h3>🧘‍♀️ Regl Sancısını Azaltan Yöntemler</h3>
+                    <p><strong>Isı Terapisi:</strong> Alt karın bölgesine sıcak su torbası koymak kas spazmlarını çözer.<br>
+                    <strong>Magnezyum & Papatya:</strong> Kas gevşetici etkisiyle sancıyı hafifletir.<br>
+                    <strong>Hafif Egzersiz:</strong> Çocuk pozu (child's pose) yoga hareketi bel ve karın baskısını anında rahatlatır.</p>
+                </div>
+
+                <div class="article-card">
+                    <span class="tag" style="background: #e1bee7; color: #4a148c;">Medikal Bilgi</span>
+                    <h3>💊 Regl Geciktirici Kullanımı ve Etkileri</h3>
+                    <p>Geciktiriciler (Noretisteron vb.) progesteron hormonunu yüksek tutarak kanamayı erteler.<br>
+                    <strong>Döngüye Etkisi:</strong> İlaç bırakıldıktan 2-3 gün sonra kanama başlar. Sonraki 1-2 döngüde hafif düzensizlik veya yoğunluk değişimi normaldir. Yılda 1-2 defadan fazla kullanılmamalıdır.</p>
+                </div>
+
+                <div class="article-card">
+                    <span class="tag" style="background: #b2ebf2; color: #006064;">Döngü Analizi</span>
+                    <h3>🔄 Sağlıklı Regl Döngüsü Kaç Gün Olmalı?</h3>
+                    <p>İki reglin ilk günleri arasındaki süre <strong>21 ile 35 gün</strong> arasındaysa döngünüz sağlıklıdır. Kanamalar ortalama 3-7 gün sürer. Yılda birkaç günlük kaymalar stres ve mevsim geçişlerinde tamamen normaldir.</p>
+                </div>
+
+                <div class="article-card">
+                    <span class="tag" style="background: #e0f7fa; color: #00838f;">Cilt Bakımı</span>
+                    <h3>🧴 Asit/BHA Kullanım Kuralları</h3>
+                    <p>BHA (Salisilik Asit) gözenekleri temizler ancak haftada 2-3 geceden fazla kullanılmamalıdır. Asit uygulanan günün sabahında mutlaka <strong>Güneş Kremi</strong> sürülmelidir, aksi halde leke riski oluşur.</p>
+                </div>
+
+            </div>
         </div>
     </div>
 
     <script>
-        // --- 🧠 STATE MANAGEMENT (Veri Yönetimi) ---
-        let currentMode = 'regl'; // Başlangıç modu
-        let currentDate = new Date(); // Şu anki tarih (Temmuz 2026)
-        
-        // Takvim verilerini tutan ana veri tabanı nesnesi
+        let currentUser = 'Kullanıcı 1';
+        let currentMode = 'regl';
+        let currentDate = new Date();
         let trackerData = {}; 
 
         const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 
-        // --- 💾 LOCALSTORAGE ENTEGRASYONU ---
         function saveToStorage() {
-            localStorage.setItem('glowup_tracker_data', JSON.stringify(trackerData));
+            localStorage.setItem('glowup_club_data', JSON.stringify(trackerData));
         }
 
         function loadFromStorage() {
-            const saved = localStorage.getItem('glowup_tracker_data');
-            if (saved) {
-                trackerData = JSON.parse(saved);
-            }
+            const saved = localStorage.getItem('glowup_club_data');
+            if (saved) trackerData = JSON.parse(saved);
         }
 
-        // Mod Değiştirme Fonksiyonu (Regl, Cilt, Lazer arası geçiş)
+        function setUser(user) {
+            currentUser = user;
+            document.querySelectorAll('.user-badge').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            renderCalendar();
+        }
+
         function setMode(mode) {
             currentMode = mode;
             document.querySelectorAll('.action-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.btn-${mode}`).classList.add('active');
         }
 
-        // Ay Değiştirme Fonksiyonu
         function changeMonth(direction) {
             currentDate.setMonth(currentDate.getMonth() + direction);
             renderCalendar();
         }
 
-        // --- 🗓️ TAKVİM OLUŞTURMA MOTORU ---
         function renderCalendar() {
             const grid = document.getElementById('calendarGrid');
-            grid.innerHTML = ''; // Grid'i temizle
+            grid.innerHTML = '';
 
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
 
-            // Başlık Güncelleme
             document.getElementById('monthYearTitle').innerText = `${monthNames[month]} ${year}`;
 
-            // Ayın ilk gününün haftanın hangi gününe denk geldiğini bulma
             let firstDayIndex = new Date(year, month, 1).getDay();
-            // Pazartesi gününü haftanın ilk günü yapmak için index ayarı (Pazarı 0'dan 7'ye çekiyoruz)
             if (firstDayIndex === 0) firstDayIndex = 7; 
 
-            // Ayın toplam kaç gün çektiğini bulma
             const totalDays = new Date(year, month + 1, 0).getDate();
 
-            // Boşlukları doldurma (Önceki aydan kalan günler için)
             for (let i = 1; i < firstDayIndex; i++) {
                 let emptyCell = document.createElement('div');
                 emptyCell.className = 'day-cell other-month';
                 grid.appendChild(emptyCell);
             }
 
-            // Gerçek Gün Hücrelerini Oluşturma
             for (let day = 1; day <= totalDays; day++) {
                 let cell = document.createElement('div');
                 cell.className = 'day-cell';
                 cell.innerText = day;
 
-                // Her gün için benzersiz bir ID/Key oluşturuyoruz (Örn: "2026-6-10")
-                let dateKey = `${year}-${month}-${day}`;
+                let dateKey = `${year}-${month}-${day}_${currentUser}`;
 
-                // Eğer o güne ait kayıtlı veri varsa pulları (noktaları) yerleştir
                 let indicatorsContainer = document.createElement('div');
                 indicatorsContainer.className = 'indicators-container';
                 
@@ -296,34 +396,29 @@
                 }
                 cell.appendChild(indicatorsContainer);
 
-                // GÜNE TIKLANDIĞINDA ÇALIŞACAK MEKANİZMA
                 cell.onclick = function() {
                     if (!trackerData[dateKey]) {
                         trackerData[dateKey] = { regl: false, skincare: false, laser: false };
                     }
 
-                    // Aktif moda göre durumu tersine çevir (Aç/Kapat)
                     trackerData[dateKey][currentMode] = !trackerData[dateKey][currentMode];
 
-                    // Eğer o güne ait hiçbir şey kalmadıysa nesneden sil (Veri temizliği)
                     if (!trackerData[dateKey].regl && !trackerData[dateKey].skincare && !trackerData[dateKey].laser) {
                         delete trackerData[dateKey];
                     }
 
-                    // Küçük bir kutlama efekti (Sadece ekleme yapıldığında patlar)
                     if (trackerData[dateKey] && trackerData[dateKey][currentMode]) {
-                        confetti({ particleCount: 30, angle: 90, spread: 45, origin: { y: 0.85 } });
+                        confetti({ particleCount: 25, angle: 90, spread: 45, origin: { y: 0.85 } });
                     }
 
                     saveToStorage();
-                    renderCalendar(); // Takvimi anında güncelle
+                    renderCalendar();
                 };
 
                 grid.appendChild(cell);
             }
         }
 
-        // Uygulamayı Başlat
         loadFromStorage();
         renderCalendar();
     </script>
