@@ -3,255 +3,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlowUp — Smart Health & Cycle Companion</title>
+    <title>GlowUp Club OS — Smart Health & Beauty</title>
     
-    <!-- PWA Desteği -->
+    <!-- PWA & Mobil App -->
     <meta name="theme-color" content="#ff4d8d">
-    <link rel="manifest" href="data:application/manifest+json,{'name':'GlowUp App','short_name':'GlowUp','start_url':'.','display':'standalone','background_color':'#ffffff','theme_color':'#ff4d8d'}">
-    
-    <!-- Fontlar, Grafikler, PDF ve İkon Kütüphaneleri -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="data:application/manifest+json,{'name':'GlowUp Club','short_name':'GlowUp','start_url':'.','display':'standalone'}">
+
+    <!-- Fonts, Charts, Icons & Effects -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,400&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
         :root {
             --primary: #ff4d8d;
-            --primary-soft: rgba(255, 77, 141, 0.1);
-            --bg-base: #f8fafc;
-            --panel-bg: rgba(255, 255, 255, 0.82);
-            --text-main: #0f172a;
-            --text-sub: #64748b;
-            --border-color: rgba(226, 232, 240, 0.8);
-            --radius-lg: 20px;
-            --radius-md: 12px;
-            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+            --primary-soft: rgba(255, 77, 141, 0.12);
+            --bg-base: #fff7fa;
+            --panel-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #1e1b1d;
+            --text-sub: #786871;
+            --border-color: rgba(255, 215, 230, 0.6);
+            --radius-xl: 28px;
+            --radius-md: 16px;
+            --shadow-glow: 0 20px 40px -15px rgba(255, 77, 141, 0.15);
         }
 
         [data-theme="dark"] {
-            --primary: #ff6b9d;
-            --primary-soft: rgba(255, 107, 157, 0.15);
-            --bg-base: #0f172a;
-            --panel-bg: rgba(30, 41, 59, 0.85);
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
-            --border-color: rgba(51, 65, 85, 0.8);
-            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+            --bg-base: #120d10;
+            --panel-bg: rgba(26, 18, 23, 0.85);
+            --text-main: #fcefe8;
+            --text-sub: #a3909a;
+            --border-color: rgba(60, 40, 52, 0.6);
+            --shadow-glow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
         }
 
-        * { box-sizing: border-box; transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
+        * { box-sizing: border-box; transition: background 0.3s, border-color 0.3s, color 0.3s; }
         body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-base); color: var(--text-main); min-height: 100vh; }
 
+        /* App Bar */
         nav {
             position: sticky; top: 0; z-index: 100;
-            background: var(--panel-bg); backdrop-filter: blur(16px);
+            background: var(--panel-bg); backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border-color);
             padding: 16px 32px; display: flex; justify-content: space-between; align-items: center;
         }
 
-        .brand { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .brand { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 800; }
         .brand span { color: var(--primary); }
 
-        .nav-actions { display: flex; gap: 12px; align-items: center; }
-        .btn-icon { background: transparent; border: 1px solid var(--border-color); padding: 8px; border-radius: 50%; color: var(--text-main); cursor: pointer; display: flex; }
+        .btn-icon { background: transparent; border: 1px solid var(--border-color); padding: 10px; border-radius: 50%; color: var(--text-main); cursor: pointer; display: flex; }
         .btn-icon:hover { background: var(--primary-soft); color: var(--primary); }
 
-        .container { max-width: 1100px; margin: 32px auto; padding: 0 20px; }
+        .container { max-width: 1140px; margin: 30px auto; padding: 0 20px 60px 20px; }
 
-        .user-switcher {
-            display: flex; gap: 12px; background: var(--panel-bg); padding: 8px; border-radius: 50px;
-            border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 24px;
+        /* Kızların Kimlik Yüzü & Profil Seçici */
+        .identity-card {
+            background: var(--panel-bg); backdrop-filter: blur(16px);
+            border-radius: var(--radius-xl); padding: 24px; border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-glow); margin-bottom: 28px;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;
         }
 
-        .user-tab {
-            flex: 1; padding: 10px 16px; border-radius: 40px; border: none; background: transparent;
-            font-weight: 600; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        .user-switcher { display: flex; gap: 10px; flex-wrap: wrap; }
+        .user-btn {
+            padding: 10px 20px; border-radius: 40px; border: 2px solid transparent; background: rgba(255,255,255,0.5);
+            font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px;
         }
 
-        .user-tab.active { background: var(--primary); color: white; box-shadow: 0 4px 12px var(--primary-soft); }
+        .user-btn.active { background: var(--primary); color: white !important; border-color: var(--primary); }
 
-        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 32px; }
-        @media(max-width: 868px) { .dashboard-grid { grid-template-columns: 1fr; } }
+        .avatar-badge {
+            display: flex; align-items: center; gap: 16px; background: var(--primary-soft);
+            padding: 12px 20px; border-radius: 50px; border: 1px solid var(--border-color);
+        }
 
-        .card { background: var(--panel-bg); backdrop-filter: blur(12px); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); }
+        .avatar-img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
 
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        /* Mod Seçiciler */
+        .tracker-modes { display: flex; gap: 10px; margin-bottom: 20px; }
+        .mode-chip {
+            flex: 1; padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color);
+            background: var(--panel-bg); font-weight: 700; font-size: 0.9rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--text-sub);
+        }
+        .mode-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* Dashboard Düzeni */
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 36px; }
+        @media(max-width: 900px) { .dashboard-grid { grid-template-columns: 1fr; } }
+
+        .card { background: var(--panel-bg); backdrop-filter: blur(16px); border-radius: var(--radius-xl); padding: 28px; border: 1px solid var(--border-color); box-shadow: var(--shadow-glow); }
+
+        /* Takvim */
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+        .day-label { text-align: center; font-size: 0.75rem; font-weight: 800; color: var(--text-sub); text-transform: uppercase; margin-bottom: 6px; }
         
-        .day-label { text-align: center; font-size: 0.75rem; font-weight: 700; color: var(--text-sub); text-transform: uppercase; margin-bottom: 8px; }
         .day-cell {
             aspect-ratio: 1; border-radius: var(--radius-md); border: 1px solid var(--border-color);
-            padding: 6px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; background: var(--panel-bg);
+            padding: 8px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; background: var(--panel-bg);
         }
-
-        .day-cell:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+        .day-cell:hover { border-color: var(--primary); transform: translateY(-2px); }
         .day-cell.other-month { opacity: 0.2; pointer-events: none; }
-        .day-cell.ovulation { border: 2px solid #10b981; background: rgba(16, 185, 129, 0.05); }
 
-        .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
         .dot-regl { background: var(--primary); }
-        .dot-ovulation { background: #10b981; }
+        .dot-skincare { background: #00bbf9; }
+        .dot-laser { background: #8a2be2; }
 
-        .analytics-card { display: flex; flex-direction: column; justify-content: space-between; }
-        
-        .btn-primary {
-            background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: var(--radius-md);
-            font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+        /* Günlük Tavsiye Kutus */
+        .advice-box { background: var(--primary-soft); border-left: 4px solid var(--primary); padding: 16px; border-radius: var(--radius-md); margin-top: 16px; font-size: 0.85rem; }
+
+        /* Mizah Banner */
+        .humor-card {
+            background: linear-gradient(135deg, var(--primary-soft), transparent);
+            border-radius: var(--radius-xl); padding: 24px; border: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 36px;
         }
 
-        .btn-primary:hover { opacity: 0.9; }
+        .btn-action { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 700; cursor: pointer; }
+        .btn-action:hover { opacity: 0.9; transform: scale(1.02); }
 
-        /* Modal styling */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
-            display: none; justify-content: center; align-items: center; z-index: 1000;
-        }
+        /* Makaleler */
+        .articles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 36px; }
+        .article-card { background: var(--panel-bg); border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--border-color); }
+        .article-img { width: 100%; height: 160px; object-fit: cover; }
+        .article-body { padding: 20px; }
 
-        .modal { background: var(--bg-base); border-radius: var(--radius-lg); padding: 32px; width: 90%; max-width: 440px; border: 1px solid var(--border-color); }
+        /* Anayasa & Pano */
+        .rules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+        .rule-item { background: var(--primary-soft); padding: 14px; border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 600; }
+
+        .notes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 16px; }
+        .note-card { background: var(--panel-bg); padding: 16px; border-radius: var(--radius-md); border-left: 4px solid var(--primary); border: 1px solid var(--border-color); }
+
+        footer { text-align: center; padding: 30px; color: var(--text-sub); font-size: 0.85rem; }
     </style>
 </head>
 <body data-theme="light">
 
     <nav>
-        <div class="brand">
-            <i data-lucide="sparkles" style="color: var(--primary);"></i>
-            GlowUp <span>SaaS</span>
-        </div>
-        <div class="nav-actions">
-            <button class="btn-icon" onclick="toggleTheme()" title="Temayı Değiştir">
-                <i data-lucide="sun" id="themeIcon"></i>
-            </button>
-            <button class="btn-icon" onclick="downloadPDFReport()" title="PDF Raporu İndir">
-                <i data-lucide="file-text"></i>
-            </button>
+        <div class="brand">GlowUp <span>Club OS</span> ✨</div>
+        <div style="display: flex; gap: 12px;">
+            <button class="btn-icon" onclick="toggleTheme()"><i data-lucide="sun" id="themeIcon"></i></button>
         </div>
     </nav>
 
-    <div class="container" id="reportContent">
+    <div class="container">
 
-        <!-- Kullanıcı Seçici Bar -->
-        <div class="user-switcher">
-            <button class="user-tab active" onclick="switchUser('Ceylin', this)"><i data-lucide="user"></i> Ceylin</button>
-            <button class="user-tab" onclick="switchUser('Hatice', this)"><i data-lucide="user"></i> Hatice</button>
-            <button class="user-tab" onclick="switchUser('Sinem', this)"><i data-lucide="user"></i> Sinem</button>
-            <button class="user-tab" onclick="switchUser('Sena', this)"><i data-lucide="user"></i> Sena</button>
+        <!-- KIMLIK YÜZÜ VE KULLANICI DEĞİŞTİRİCİ -->
+        <div class="identity-card">
+            <div>
+                <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-sub); letter-spacing: 1px;">AKTİF ÜYE KİMLİĞİ</div>
+                <div class="user-switcher" style="margin-top: 8px;">
+                    <button class="user-btn active" id="btn-Ceylin" onclick="setUser('Ceylin', '#ff4d8d', '#fff7fa', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150')">🌸 Ceylin</button>
+                    <button class="user-btn" id="btn-Hatice" onclick="setUser('Hatice', '#8a2be2', '#fbf7ff', 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150')">💜 Hatice</button>
+                    <button class="user-btn" id="btn-Sinem" onclick="setUser('Sinem', '#00bbf9', '#f0fcfd', 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150')">💙 Sinem</button>
+                    <button class="user-btn" id="btn-Sena" onclick="setUser('Sena', '#e63946', '#fff5f5', 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150')">❤️ Sena</button>
+                </div>
+            </div>
+
+            <div class="avatar-badge">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" id="userAvatar" class="avatar-img" alt="Avatar">
+                <div>
+                    <div style="font-weight: 800; font-size: 1rem;" id="userName">Ceylin</div>
+                    <div style="font-size: 0.75rem; color: var(--text-sub);" id="userRole">VIP Drama Kraliçesi</div>
+                </div>
+            </div>
         </div>
 
+        <!-- MİZAH BANNER & KAOS ÇARKI -->
+        <div class="humor-card">
+            <div>
+                <span style="font-size: 0.75rem; font-weight: 800; color: var(--primary);">HORMON TAHMİN MOTORU 🧬</span>
+                <div style="font-size: 1rem; font-weight: 700; margin-top: 4px;" id="humorText">"Luteal Evre: Tatlı krizleri ve durduk yere gelen ağlama istekleri aktif."</div>
+            </div>
+            <button class="btn-action" onclick="spinChaos()">🎲 Günün Kaosunu Çek</button>
+        </div>
+
+        <!-- ANA DASHBOARD -->
         <div class="dashboard-grid">
             
-            <!-- Takvim Kartı -->
             <div class="card">
-                <div class="calendar-header">
-                    <h2 style="margin: 0; font-size: 1.25rem; font-weight: 700;" id="monthTitle">Ağustos 2026</h2>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn-icon" onclick="changeMonth(-1)"><i data-lucide="chevron-left"></i></button>
-                        <button class="btn-icon" onclick="changeMonth(1)"><i data-lucide="chevron-right"></i></button>
-                    </div>
+                <!-- Mod Seçiciler -->
+                <div class="tracker-modes">
+                    <div class="mode-chip active" id="mode-regl" onclick="setMode('regl')"><i data-lucide="droplet"></i> Adet Döngüsü</div>
+                    <div class="mode-chip" id="mode-skincare" onclick="setMode('skincare')"><i data-lucide="sparkles"></i> Cilt Bakımı</div>
+                    <div class="mode-chip" id="mode-laser" onclick="setMode('laser')"><i data-lucide="zap"></i> Lazer Seansı</div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <button class="btn-icon" onclick="changeMonth(-1)"><i data-lucide="chevron-left"></i></button>
+                    <h3 style="margin: 0; font-family: 'Playfair Display', serif;" id="monthTitle">Ağustos 2026</h3>
+                    <button class="btn-icon" onclick="changeMonth(1)"><i data-lucide="chevron-right"></i></button>
                 </div>
 
                 <div class="calendar-grid">
-                    <div class="day-label">Pzt</div>
-                    <div class="day-label">Sal</div>
-                    <div class="day-label">Çar</div>
-                    <div class="day-label">Per</div>
-                    <div class="day-label">Cum</div>
-                    <div class="day-label">Cmt</div>
-                    <div class="day-label">Paz</div>
+                    <div class="day-label">Pzt</div><div class="day-label">Sal</div><div class="day-label">Çar</div>
+                    <div class="day-label">Per</div><div class="day-label">Cum</div><div class="day-label">Cmt</div><div class="day-label">Paz</div>
                 </div>
                 <div class="calendar-grid" id="calendarDays" style="margin-top: 8px;"></div>
+
+                <!-- Günlük Akıllı Tavsiye Motoru -->
+                <div class="advice-box" id="dailyAdvice">
+                    💡 <strong>Akıllı Öneri:</strong> Adet döngünüzün 1. günündesiniz. Yüksek yoğunluklu kardiyo yerine hafif yürüyüş ve Magnezyum takviyesi önerilir.
+                </div>
             </div>
 
-            <!-- Sağ Taraf: Analitik & Raporlama -->
-            <div class="card analytics-card">
+            <!-- Sağ Taraf: Analitik Grafiği -->
+            <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
                 <div>
                     <h3 style="margin-top: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
-                        <i data-lucide="activity" style="color: var(--primary);"></i> Döngü Analitiği
+                        <i data-lucide="activity" style="color: var(--primary);"></i> Döngü & Hormon Analizi
                     </h3>
-                    <p style="font-size: 0.85rem; color: var(--text-sub);">Ortalama Döngü: <strong>28 Gün</strong></p>
-                    <div style="height: 180px; width: 100%;">
+                    <p style="font-size: 0.85rem; color: var(--text-sub);">Son 4 ayın ortalama döngüsü: <strong>28.5 Gün</strong></p>
+                    <div style="height: 200px; width: 100%;">
                         <canvas id="cycleChart"></canvas>
                     </div>
                 </div>
-
-                <button class="btn-primary" onclick="downloadPDFReport()" style="margin-top: 20px;">
-                    <i data-lucide="download"></i> Jinekolog Raporu Al (PDF)
-                </button>
             </div>
 
         </div>
 
-    </div>
-
-    <!-- Semptom ve Güncelleme Modalı -->
-    <div class="modal-overlay" id="entryModal">
-        <div class="modal">
-            <h3 style="margin-top: 0;" id="modalDate">Tarih Seçildi</h3>
-            <p style="font-size: 0.85rem; color: var(--text-sub);">Bu gün için verilerinizi güncelleyin:</p>
-            
-            <div style="display: flex; flex-direction: column; gap: 12px; margin: 20px 0;">
-                <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
-                    <input type="checkbox" id="reglCheck"> 🩸 Regl Başlangıcı / Devamı
-                </label>
+        <!-- MAKALELER & MEDİKAL REHBER -->
+        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 16px;">Uzman & Medikal Rehber 📖</h3>
+        <div class="articles-grid">
+            <div class="article-card">
+                <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500" class="article-img" alt="Sancı">
+                <div class="article-body">
+                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--primary);">ACOG MEDİKAL KAYNAKLI</span>
+                    <h4 style="margin: 6px 0;">Sancıları Kesen 3 Hücresel Yöntem</h4>
+                    <p style="font-size: 0.8rem; color: var(--text-sub); line-height: 1.5;">Kas kasılmalarını engellemek için Magnezyum Bisglisinat ve alt karın bölgesine sıcak kompres desteği inflamasyonu hücresel bazda azaltır.</p>
+                </div>
             </div>
 
-            <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                <button class="btn-icon" onclick="closeModal()" style="border-radius: var(--radius-md); padding: 8px 16px;">İptal</button>
-                <button class="btn-primary" onclick="saveEntry()" style="width: auto;">Kaydet</button>
+            <div class="article-card">
+                <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500" class="article-img" alt="Medikal">
+                <div class="article-body">
+                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--primary);">DERMATOLOJİ REHBERİ</span>
+                    <h4 style="margin: 6px 0;">Lazer & BHA/AHA Asit İkazı</h4>
+                    <p style="font-size: 0.8rem; color: var(--text-sub); line-height: 1.5;">Salisilik ve Glikolik asitler cildi hassaslaştırır. Lazer seansından en az 5 gün önce tüm asitli serumları durdurmalısınız.</p>
+                </div>
+            </div>
+
+            <div class="article-card">
+                <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=500" class="article-img" alt="Cilt">
+                <div class="article-body">
+                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--primary);">HORMONAL CİLT CARE</span>
+                    <h4 style="margin: 6px 0;">Luteal Evrede Cilt Bakımı</h4>
+                    <p style="font-size: 0.8rem; color: var(--text-sub); line-height: 1.5;">Artan progesteron yağ üretimini tetikler. Bu dönemde ağır yağlar yerine Niacinamide ve Su bazlı nemlendiricilere geçin.</p>
+                </div>
             </div>
         </div>
+
+        <!-- KIZLAR KULÜBÜ ANAYASASI -->
+        <div class="card" style="margin-bottom: 36px;">
+            <h3 style="margin-top: 0; font-family: 'Playfair Display', serif;">💅 Kızlar Kulübü Anayasası</h3>
+            <div class="rules-grid">
+                <div class="rule-item">Madde 1: Regl olan üyeye çikolata/tatlı siparişi vermek gruptakilerin sorumluluğundadır.</div>
+                <div class="rule-item">Madde 2: Lazer seansı günü BHA asitli serum kullanan gruptan 1 gün uzaklaştırılır!</div>
+                <div class="rule-item">Madde 3: Ex-sevgiliye atılacak mesajlar önce gruptan onay almalıdır.</div>
+                <div class="rule-item">Madde 4: Güneş kremi sürmeden dışarı çıkan GlowUp haklarından mahrum edilir ☀️</div>
+            </div>
+        </div>
+
+        <!-- ORTAK PANO -->
+        <div class="card">
+            <h3 style="margin-top: 0; font-family: 'Playfair Display', serif;">📌 Kızlar Ortak Not Panosu</h3>
+            <div style="display: flex; gap: 10px; margin-top: 12px;">
+                <input type="text" id="noteInput" style="flex: 1; padding: 12px 18px; border-radius: 30px; border: 1px solid var(--border-color); outline: none;" placeholder="Panoya bir drama/not bırak...">
+                <button class="btn-action" onclick="addNote()">Not Ekle</button>
+            </div>
+            <div class="notes-grid" id="notesGrid"></div>
+        </div>
+
     </div>
 
-    <!-- FIREBASE & JS MANTIĞI -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-            projectId: "YOUR_PROJECT",
-            storageBucket: "YOUR_PROJECT.appspot.com",
-            messagingSenderId: "SENDER_ID",
-            appId: "APP_ID"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        window.db = db; window.dbRef = ref; window.dbSet = set;
-
-        onValue(ref(db, 'glowup_data'), (snapshot) => {
-            const data = snapshot.val();
-            if(data) { window.glowData = data; window.renderCalendar(); }
-        });
-    </script>
+    <footer>GlowUp Club OS © 2026 — Ceylin, Hatice, Sinem & Sena ✨</footer>
 
     <script>
-        lucide.createIcons();
+        // LocalStorage Tabanlı Güvenli Veri Yönetimi
         let currentUser = 'Ceylin';
+        let activeMode = 'regl';
         let currentDate = new Date();
-        window.glowData = {};
-        let activeKey = null;
+        
+        let trackerData = JSON.parse(localStorage.getItem('glowup_tracker_v2')) || {};
+        let notesData = JSON.parse(localStorage.getItem('glowup_notes_v2')) || [
+            { user: 'Sena', text: 'Kızlar akşam kahveye kimler geliyor? ☕' },
+            { user: 'Hatice', text: 'Lazerden geldim kızlar asitli serum sürmeyin uyarısı yapıyorum!' }
+        ];
 
-        const months = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+        const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+
+        const userRoles = {
+            'Ceylin': 'VIP Drama Kraliçesi',
+            'Hatice': 'Estetik & Cilt Gurusu',
+            'Sinem': 'Fitness & Wellness Koçu',
+            'Sena': 'Astroloji & Kaos Lideri'
+        };
 
         function toggleTheme() {
-            const body = document.body;
-            const isDark = body.getAttribute('data-theme') === 'dark';
-            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
             document.getElementById('themeIcon').setAttribute('data-lucide', isDark ? 'sun' : 'moon');
             lucide.createIcons();
         }
 
-        function switchUser(name, btn) {
+        function setUser(name, color, bg, avatar) {
             currentUser = name;
-            document.querySelectorAll('.user-tab').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            document.documentElement.style.setProperty('--primary', color);
+            document.documentElement.style.setProperty('--bg-base', bg);
+            
+            document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${name}`).classList.add('active');
+
+            document.getElementById('userName').innerText = name;
+            document.getElementById('userRole').innerText = userRoles[name];
+            document.getElementById('userAvatar').src = avatar;
+
             renderCalendar();
+        }
+
+        function setMode(mode) {
+            activeMode = mode;
+            document.querySelectorAll('.mode-chip').forEach(c => c.classList.remove('active'));
+            document.getElementById(`mode-${mode}`).classList.add('active');
+            
+            const adviceMap = {
+                'regl': '💡 <strong>Adet Modu:</strong> Magnezyum Bisglisinat takviyesi ve sıcak su kompresi kasılmaları hafifletir.',
+                'skincare': '🧴 <strong>Cilt Modu:</strong> Luteal evrede yağlanma artar; Salisilik asit (BHA) ve Niacinamide tercih edin.',
+                'laser': '⚡ <strong>Lazer Modu:</strong> Seans tarihinden 5 gün önce asitli serum kullanımını kesmeyi unutmayın!'
+            };
+            document.getElementById('dailyAdvice').innerHTML = adviceMap[mode];
         }
 
         function changeMonth(dir) {
@@ -259,13 +342,13 @@
             renderCalendar();
         }
 
-        window.renderCalendar = function() {
+        function renderCalendar() {
             const grid = document.getElementById('calendarDays');
             grid.innerHTML = '';
-            
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
-            document.getElementById('monthTitle').innerText = `${months[month]} ${year}`;
+
+            document.getElementById('monthTitle').innerText = `${monthNames[month]} ${year}`;
 
             let firstDay = new Date(year, month, 1).getDay();
             if (firstDay === 0) firstDay = 7;
@@ -277,68 +360,86 @@
 
             for (let day = 1; day <= totalDays; day++) {
                 const dateKey = `${year}-${month}-${day}_${currentUser}`;
-                const isRegl = window.glowData[dateKey]?.regl;
-
-                // Yumurtlama hesabı (Mizanpaj örneği: Ayın 14. günü civarı)
-                const isOvulation = (day === 14);
-
-                let cellClass = 'day-cell';
-                if(isOvulation) cellClass += ' ovulation';
+                const dayData = trackerData[dateKey] || {};
 
                 grid.innerHTML += `
-                    <div class="${cellClass}" onclick="openModal('${dateKey}', '${year}-${month + 1}-${day}')">
-                        <span style="font-size: 0.8rem; font-weight: 700;">${day}</span>
-                        <div style="display: flex; gap: 4px;">
-                            ${isRegl ? '<span class="status-dot dot-regl"></span>' : ''}
-                            ${isOvulation ? '<span class="status-dot dot-ovulation"></span>' : ''}
+                    <div class="day-cell" onclick="toggleDay('${dateKey}')">
+                        <span style="font-weight: 700; font-size: 0.8rem;">${day}</span>
+                        <div style="display: flex; gap: 3px;">
+                            ${dayData.regl ? '<span class="status-dot dot-regl"></span>' : ''}
+                            ${dayData.skincare ? '<span class="status-dot dot-skincare"></span>' : ''}
+                            ${dayData.laser ? '<span class="status-dot dot-laser"></span>' : ''}
                         </div>
                     </div>
                 `;
             }
-        };
-
-        function openModal(key, dateStr) {
-            activeKey = key;
-            document.getElementById('modalDate').innerText = dateStr;
-            document.getElementById('reglCheck').checked = !!window.glowData[key]?.regl;
-            document.getElementById('entryModal').style.display = 'flex';
         }
 
-        function closeModal() { document.getElementById('entryModal').style.display = 'none'; }
+        function toggleDay(key) {
+            if(!trackerData[key]) trackerData[key] = {};
+            trackerData[key][activeMode] = !trackerData[key][activeMode];
 
-        function saveEntry() {
-            if(!window.glowData[activeKey]) window.glowData[activeKey] = {};
-            window.glowData[activeKey].regl = document.getElementById('reglCheck').checked;
-
-            if(window.db && window.dbSet) {
-                window.dbSet(window.dbRef(window.db, 'glowup_data'), window.glowData);
+            if(trackerData[key][activeMode]) {
+                confetti({ particleCount: 20, spread: 40, origin: { y: 0.8 } });
             }
-            closeModal();
+
+            localStorage.setItem('glowup_tracker_v2', JSON.stringify(trackerData));
             renderCalendar();
         }
 
-        function downloadPDFReport() {
-            const element = document.getElementById('reportContent');
-            html2pdf().from(element).save(`GlowUp_Saglik_Raporu_${currentUser}.pdf`);
+        function spinChaos() {
+            const chaosList = [
+                "Aniden eski sevgilinin ablasının Instagram hikayesine bakarken yakalandın 💀",
+                "Saçını kestirme krizin geldi, acil gruba fotoğraf at!",
+                "Sırf ambalajı çok tatlı diye 1500 TL'lik bir nemlendirici aldın 🧴",
+                "Gruba 'Çok acil bakın' yazıp sadece kahve fotoğrafı attın ☕"
+            ];
+            alert(`🎲 ${currentUser} için Günün Kaosu:\n\n"${chaosList[Math.floor(Math.random()*chaosList.length)]}"`);
         }
 
-        // Chart.js Entegrasyonu
-        const ctx = document.getElementById('cycleChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Mayıs', 'Haziran', 'Temmuz', 'Ağustos'],
-                datasets: [{
-                    label: 'Döngü Süresi (Gün)',
-                    data: [28, 29, 27, 28],
-                    borderColor: '#ff4d8d',
-                    tension: 0.4
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-        });
+        function renderNotes() {
+            const grid = document.getElementById('notesGrid');
+            grid.innerHTML = '';
+            notesData.forEach(n => {
+                grid.innerHTML += `
+                    <div class="note-card">
+                        <strong style="color: var(--primary); font-size: 0.85rem;">${n.user}</strong>
+                        <p style="margin: 4px 0 0 0; font-size: 0.85rem;">${n.text}</p>
+                    </div>
+                `;
+            });
+        }
 
-        window.renderCalendar();
+        function addNote() {
+            const input = document.getElementById('noteInput');
+            if(!input.value.trim()) return;
+            notesData.push({ user: currentUser, text: input.value.trim() });
+            localStorage.setItem('glowup_notes_v2', JSON.stringify(notesData));
+            input.value = '';
+            renderNotes();
+        }
+
+        // Sayfa Yüklendiğinde Başlatıcılar
+        window.onload = function() {
+            lucide.createIcons();
+            renderCalendar();
+            renderNotes();
+
+            const ctx = document.getElementById('cycleChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mayıs', 'Haziran', 'Temmuz', 'Ağustos'],
+                    datasets: [{
+                        label: 'Döngü Süresi',
+                        data: [28, 29, 28, 29],
+                        borderColor: '#ff4d8d',
+                        tension: 0.4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        };
     </script>
 </body>
 </html>
