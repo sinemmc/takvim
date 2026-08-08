@@ -3,424 +3,342 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlowUp Club & Journal ✨</title>
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>GlowUp — Smart Health & Cycle Companion</title>
+    
+    <!-- PWA Desteği -->
+    <meta name="theme-color" content="#ff4d8d">
+    <link rel="manifest" href="data:application/manifest+json,{'name':'GlowUp App','short_name':'GlowUp','start_url':'.','display':'standalone','background_color':'#ffffff','theme_color':'#ff4d8d'}">
+    
+    <!-- Fontlar, Grafikler, PDF ve İkon Kütüphaneleri -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #fff5f5 0%, #f3e5f5 100%);
-            --panel-bg: rgba(255, 255, 255, 0.85);
-            --text-main: #4a3740;
-            --regl-color: #ff8a98;
-            --skincare-color: #80deea;
-            --laser-color: #b39ddb;
-            --border-radius: 20px;
+            --primary: #ff4d8d;
+            --primary-soft: rgba(255, 77, 141, 0.1);
+            --bg-base: #f8fafc;
+            --panel-bg: rgba(255, 255, 255, 0.82);
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --border-color: rgba(226, 232, 240, 0.8);
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
         }
 
-        body {
-            margin: 0;
-            padding: 20px;
-            background: var(--bg-gradient);
-            font-family: 'Poppins', sans-serif;
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
+        [data-theme="dark"] {
+            --primary: #ff6b9d;
+            --primary-soft: rgba(255, 107, 157, 0.15);
+            --bg-base: #0f172a;
+            --panel-bg: rgba(30, 41, 59, 0.85);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border-color: rgba(51, 65, 85, 0.8);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
         }
 
-        .main-container {
-            background: var(--panel-bg);
-            backdrop-filter: blur(15px);
-            padding: 30px;
-            border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(165, 105, 189, 0.1);
-            max-width: 900px;
-            width: 100%;
-            border: 1px solid rgba(255, 255, 255, 0.6);
+        * { box-sizing: border-box; transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
+        body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-base); color: var(--text-main); min-height: 100vh; }
+
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--panel-bg); backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 32px; display: flex; justify-content: space-between; align-items: center;
         }
 
-        h1 {
-            font-family: 'Comfortaa', cursive;
-            text-align: center;
-            color: #6d4c5c;
-            margin-top: 0;
-            font-size: 2.2rem;
+        .brand { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .brand span { color: var(--primary); }
+
+        .nav-actions { display: flex; gap: 12px; align-items: center; }
+        .btn-icon { background: transparent; border: 1px solid var(--border-color); padding: 8px; border-radius: 50%; color: var(--text-main); cursor: pointer; display: flex; }
+        .btn-icon:hover { background: var(--primary-soft); color: var(--primary); }
+
+        .container { max-width: 1100px; margin: 32px auto; padding: 0 20px; }
+
+        .user-switcher {
+            display: flex; gap: 12px; background: var(--panel-bg); padding: 8px; border-radius: 50px;
+            border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 24px;
         }
 
-        p.subtitle {
-            text-align: center;
-            font-size: 0.95rem;
-            opacity: 0.8;
-            margin-bottom: 25px;
+        .user-tab {
+            flex: 1; padding: 10px 16px; border-radius: 40px; border: none; background: transparent;
+            font-weight: 600; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
 
-        /* --- KULLANICI SEÇİCİ --- */
-        .user-selector {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            background: rgba(255,255,255,0.5);
-            padding: 10px;
-            border-radius: 15px;
-        }
+        .user-tab.active { background: var(--primary); color: white; box-shadow: 0 4px 12px var(--primary-soft); }
 
-        .user-badge {
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.85rem;
-            border: 2px solid transparent;
-            transition: all 0.2s;
-        }
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 32px; }
+        @media(max-width: 868px) { .dashboard-grid { grid-template-columns: 1fr; } }
 
-        .user-badge.active {
-            border-color: #6d4c5c;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
+        .card { background: var(--panel-bg); backdrop-filter: blur(12px); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); }
 
-        /* --- BUTON SEÇİCİLER --- */
-        .category-selector {
-            display: flex;
-            justify-content: space-around;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .action-btn {
-            flex: 1;
-            border: none;
-            padding: 12px;
-            border-radius: var(--border-radius);
-            font-weight: 600;
-            font-family: 'Poppins', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 0.85rem;
-        }
-
-        .btn-regl { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
-        .btn-regl.active { background-color: var(--regl-color); color: white; }
-
-        .btn-skincare { background-color: #e0f7fa; color: #00838f; border: 1px solid #b2ebf2; }
-        .btn-skincare.active { background-color: var(--skincare-color); color: white; }
-
-        .btn-laser { background-color: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7; }
-        .btn-laser.active { background-color: var(--laser-color); color: white; }
-
-        /* --- TAKVİM ALANI --- */
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            font-weight: 600;
-            padding: 0 10px;
-        }
-
-        .nav-btn {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: var(--text-main);
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
-            margin-bottom: 25px;
-        }
-
-        .day-name {
-            text-align: center;
-            font-weight: 600;
-            font-size: 0.8rem;
-            opacity: 0.6;
-            padding-bottom: 5px;
-        }
-
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+        
+        .day-label { text-align: center; font-size: 0.75rem; font-weight: 700; color: var(--text-sub); text-transform: uppercase; margin-bottom: 8px; }
         .day-cell {
-            background: white;
-            aspect-ratio: 1;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid #f3e5f5;
-            position: relative;
+            aspect-ratio: 1; border-radius: var(--radius-md); border: 1px solid var(--border-color);
+            padding: 6px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; background: var(--panel-bg);
         }
 
-        .day-cell:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        .day-cell:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+        .day-cell.other-month { opacity: 0.2; pointer-events: none; }
+        .day-cell.ovulation { border: 2px solid #10b981; background: rgba(16, 185, 129, 0.05); }
+
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+        .dot-regl { background: var(--primary); }
+        .dot-ovulation { background: #10b981; }
+
+        .analytics-card { display: flex; flex-direction: column; justify-content: space-between; }
+        
+        .btn-primary {
+            background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: var(--radius-md);
+            font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
         }
 
-        .day-cell.other-month {
-            opacity: 0.3;
-            cursor: not-allowed;
+        .btn-primary:hover { opacity: 0.9; }
+
+        /* Modal styling */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
         }
 
-        .indicators-container {
-            display: flex;
-            gap: 2px;
-            justify-content: center;
-            width: 100%;
-            min-height: 8px;
-            flex-wrap: wrap;
-        }
-
-        .dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        .dot-regl { background-color: var(--regl-color); }
-        .dot-skincare { background-color: var(--skincare-color); }
-        .dot-laser { background-color: var(--laser-color); }
-
-        /* --- DERGİ & MAKALELER (JOURNAL) --- */
-        .magazine-section {
-            margin-top: 35px;
-            border-top: 2px dashed #e1bee7;
-            padding-top: 25px;
-        }
-
-        .section-title {
-            font-family: 'Comfortaa', cursive;
-            color: #6d4c5c;
-            font-size: 1.4rem;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .articles-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
-
-        .article-card {
-            background: white;
-            padding: 18px;
-            border-radius: 15px;
-            border: 1px solid #f3e5f5;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-        }
-
-        .article-card h3 {
-            margin-top: 0;
-            font-size: 1rem;
-            color: #8e24aa;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .article-card p {
-            font-size: 0.82rem;
-            line-height: 1.5;
-            color: #555;
-            margin-bottom: 0;
-        }
-
-        .tag {
-            display: inline-block;
-            background: #ffe0b2;
-            color: #e65100;
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
+        .modal { background: var(--bg-base); border-radius: var(--radius-lg); padding: 32px; width: 90%; max-width: 440px; border: 1px solid var(--border-color); }
     </style>
 </head>
-<body>
+<body data-theme="light">
 
-    <div class="main-container">
-        <h1>GlowUp Club ✨</h1>
-        <p class="subtitle">Kişisel ajandanız, ortak takip alanınız ve bakım rehberiniz.</p>
+    <nav>
+        <div class="brand">
+            <i data-lucide="sparkles" style="color: var(--primary);"></i>
+            GlowUp <span>SaaS</span>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-icon" onclick="toggleTheme()" title="Temayı Değiştir">
+                <i data-lucide="sun" id="themeIcon"></i>
+            </button>
+            <button class="btn-icon" onclick="downloadPDFReport()" title="PDF Raporu İndir">
+                <i data-lucide="file-text"></i>
+            </button>
+        </div>
+    </nav>
 
-        <!-- KULLANICI SEÇİM ALANI -->
-        <div class="user-selector">
-            <div class="user-badge active" style="background: #ffe1e6;" onclick="setUser('Kullanıcı 1')">🌸 1. Kız</div>
-            <div class="user-badge" style="background: #e1f5fe;" onclick="setUser('Kullanıcı 2')">💧 2. Kız</div>
-            <div class="user-badge" style="background: #f3e5f5;" onclick="setUser('Kullanıcı 3')">✨ 3. Kız</div>
-            <div class="user-badge" style="background: #e8f5e9;" onclick="setUser('Kullanıcı 4')">🌿 4. Kız</div>
+    <div class="container" id="reportContent">
+
+        <!-- Kullanıcı Seçici Bar -->
+        <div class="user-switcher">
+            <button class="user-tab active" onclick="switchUser('Ceylin', this)"><i data-lucide="user"></i> Ceylin</button>
+            <button class="user-tab" onclick="switchUser('Hatice', this)"><i data-lucide="user"></i> Hatice</button>
+            <button class="user-tab" onclick="switchUser('Sinem', this)"><i data-lucide="user"></i> Sinem</button>
+            <button class="user-tab" onclick="switchUser('Sena', this)"><i data-lucide="user"></i> Sena</button>
         </div>
 
-        <div class="category-selector">
-            <button class="action-btn btn-regl active" onclick="setMode('regl')">🌸 Regl Takibi</button>
-            <button class="action-btn btn-skincare" onclick="setMode('skincare')">🧴 Cilt Bakımı</button>
-            <button class="action-btn btn-laser" onclick="setMode('laser')">⚡ Lazer Seansı</button>
-        </div>
+        <div class="dashboard-grid">
+            
+            <!-- Takvim Kartı -->
+            <div class="card">
+                <div class="calendar-header">
+                    <h2 style="margin: 0; font-size: 1.25rem; font-weight: 700;" id="monthTitle">Ağustos 2026</h2>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-icon" onclick="changeMonth(-1)"><i data-lucide="chevron-left"></i></button>
+                        <button class="btn-icon" onclick="changeMonth(1)"><i data-lucide="chevron-right"></i></button>
+                    </div>
+                </div>
 
-        <div class="calendar-header">
-            <button class="nav-btn" onclick="changeMonth(-1)">❮</button>
-            <span id="monthYearTitle">Ağustos 2026</span>
-            <button class="nav-btn" onclick="changeMonth(1)">❯</button>
-        </div>
-
-        <div>
-            <div style="display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 5px;">
-                <div class="day-name">Pzt</div>
-                <div class="day-name">Sal</div>
-                <div class="day-name">Çar</div>
-                <div class="day-name">Per</div>
-                <div class="day-name">Cum</div>
-                <div class="day-name">Cmt</div>
-                <div class="day-name">Paz</div>
+                <div class="calendar-grid">
+                    <div class="day-label">Pzt</div>
+                    <div class="day-label">Sal</div>
+                    <div class="day-label">Çar</div>
+                    <div class="day-label">Per</div>
+                    <div class="day-label">Cum</div>
+                    <div class="day-label">Cmt</div>
+                    <div class="day-label">Paz</div>
+                </div>
+                <div class="calendar-grid" id="calendarDays" style="margin-top: 8px;"></div>
             </div>
-            <div class="calendar-grid" id="calendarGrid"></div>
+
+            <!-- Sağ Taraf: Analitik & Raporlama -->
+            <div class="card analytics-card">
+                <div>
+                    <h3 style="margin-top: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="activity" style="color: var(--primary);"></i> Döngü Analitiği
+                    </h3>
+                    <p style="font-size: 0.85rem; color: var(--text-sub);">Ortalama Döngü: <strong>28 Gün</strong></p>
+                    <div style="height: 180px; width: 100%;">
+                        <canvas id="cycleChart"></canvas>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="downloadPDFReport()" style="margin-top: 20px;">
+                    <i data-lucide="download"></i> Jinekolog Raporu Al (PDF)
+                </button>
+            </div>
+
         </div>
 
-        <!-- DERGİ / REHBER BÖLÜMÜ -->
-        <div class="magazine-section">
-            <div class="section-title">📖 GlowUp Ajanda & Sağlık Rehberi</div>
-            <div class="articles-grid">
-                
-                <div class="article-card">
-                    <span class="tag">Sağlık & Ağrı</span>
-                    <h3>🧘‍♀️ Regl Sancısını Azaltan Yöntemler</h3>
-                    <p><strong>Isı Terapisi:</strong> Alt karın bölgesine sıcak su torbası koymak kas spazmlarını çözer.<br>
-                    <strong>Magnezyum & Papatya:</strong> Kas gevşetici etkisiyle sancıyı hafifletir.<br>
-                    <strong>Hafif Egzersiz:</strong> Çocuk pozu (child's pose) yoga hareketi bel ve karın baskısını anında rahatlatır.</p>
-                </div>
+    </div>
 
-                <div class="article-card">
-                    <span class="tag" style="background: #e1bee7; color: #4a148c;">Medikal Bilgi</span>
-                    <h3>💊 Regl Geciktirici Kullanımı ve Etkileri</h3>
-                    <p>Geciktiriciler (Noretisteron vb.) progesteron hormonunu yüksek tutarak kanamayı erteler.<br>
-                    <strong>Döngüye Etkisi:</strong> İlaç bırakıldıktan 2-3 gün sonra kanama başlar. Sonraki 1-2 döngüde hafif düzensizlik veya yoğunluk değişimi normaldir. Yılda 1-2 defadan fazla kullanılmamalıdır.</p>
-                </div>
+    <!-- Semptom ve Güncelleme Modalı -->
+    <div class="modal-overlay" id="entryModal">
+        <div class="modal">
+            <h3 style="margin-top: 0;" id="modalDate">Tarih Seçildi</h3>
+            <p style="font-size: 0.85rem; color: var(--text-sub);">Bu gün için verilerinizi güncelleyin:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px; margin: 20px 0;">
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                    <input type="checkbox" id="reglCheck"> 🩸 Regl Başlangıcı / Devamı
+                </label>
+            </div>
 
-                <div class="article-card">
-                    <span class="tag" style="background: #b2ebf2; color: #006064;">Döngü Analizi</span>
-                    <h3>🔄 Sağlıklı Regl Döngüsü Kaç Gün Olmalı?</h3>
-                    <p>İki reglin ilk günleri arasındaki süre <strong>21 ile 35 gün</strong> arasındaysa döngünüz sağlıklıdır. Kanamalar ortalama 3-7 gün sürer. Yılda birkaç günlük kaymalar stres ve mevsim geçişlerinde tamamen normaldir.</p>
-                </div>
-
-                <div class="article-card">
-                    <span class="tag" style="background: #e0f7fa; color: #00838f;">Cilt Bakımı</span>
-                    <h3>🧴 Asit/BHA Kullanım Kuralları</h3>
-                    <p>BHA (Salisilik Asit) gözenekleri temizler ancak haftada 2-3 geceden fazla kullanılmamalıdır. Asit uygulanan günün sabahında mutlaka <strong>Güneş Kremi</strong> sürülmelidir, aksi halde leke riski oluşur.</p>
-                </div>
-
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn-icon" onclick="closeModal()" style="border-radius: var(--radius-md); padding: 8px 16px;">İptal</button>
+                <button class="btn-primary" onclick="saveEntry()" style="width: auto;">Kaydet</button>
             </div>
         </div>
     </div>
 
+    <!-- FIREBASE & JS MANTIĞI -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        window.db = db; window.dbRef = ref; window.dbSet = set;
+
+        onValue(ref(db, 'glowup_data'), (snapshot) => {
+            const data = snapshot.val();
+            if(data) { window.glowData = data; window.renderCalendar(); }
+        });
+    </script>
+
     <script>
-        let currentUser = 'Kullanıcı 1';
-        let currentMode = 'regl';
+        lucide.createIcons();
+        let currentUser = 'Ceylin';
         let currentDate = new Date();
-        let trackerData = {}; 
+        window.glowData = {};
+        let activeKey = null;
 
-        const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+        const months = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 
-        function saveToStorage() {
-            localStorage.setItem('glowup_club_data', JSON.stringify(trackerData));
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeIcon').setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+            lucide.createIcons();
         }
 
-        function loadFromStorage() {
-            const saved = localStorage.getItem('glowup_club_data');
-            if (saved) trackerData = JSON.parse(saved);
-        }
-
-        function setUser(user) {
-            currentUser = user;
-            document.querySelectorAll('.user-badge').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
+        function switchUser(name, btn) {
+            currentUser = name;
+            document.querySelectorAll('.user-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
             renderCalendar();
         }
 
-        function setMode(mode) {
-            currentMode = mode;
-            document.querySelectorAll('.action-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.btn-${mode}`).classList.add('active');
-        }
-
-        function changeMonth(direction) {
-            currentDate.setMonth(currentDate.getMonth() + direction);
+        function changeMonth(dir) {
+            currentDate.setMonth(currentDate.getMonth() + dir);
             renderCalendar();
         }
 
-        function renderCalendar() {
-            const grid = document.getElementById('calendarGrid');
+        window.renderCalendar = function() {
+            const grid = document.getElementById('calendarDays');
             grid.innerHTML = '';
-
+            
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
+            document.getElementById('monthTitle').innerText = `${months[month]} ${year}`;
 
-            document.getElementById('monthYearTitle').innerText = `${monthNames[month]} ${year}`;
-
-            let firstDayIndex = new Date(year, month, 1).getDay();
-            if (firstDayIndex === 0) firstDayIndex = 7; 
-
+            let firstDay = new Date(year, month, 1).getDay();
+            if (firstDay === 0) firstDay = 7;
             const totalDays = new Date(year, month + 1, 0).getDate();
 
-            for (let i = 1; i < firstDayIndex; i++) {
-                let emptyCell = document.createElement('div');
-                emptyCell.className = 'day-cell other-month';
-                grid.appendChild(emptyCell);
+            for (let i = 1; i < firstDay; i++) {
+                grid.innerHTML += `<div class="day-cell other-month"></div>`;
             }
 
             for (let day = 1; day <= totalDays; day++) {
-                let cell = document.createElement('div');
-                cell.className = 'day-cell';
-                cell.innerText = day;
+                const dateKey = `${year}-${month}-${day}_${currentUser}`;
+                const isRegl = window.glowData[dateKey]?.regl;
 
-                let dateKey = `${year}-${month}-${day}_${currentUser}`;
+                // Yumurtlama hesabı (Mizanpaj örneği: Ayın 14. günü civarı)
+                const isOvulation = (day === 14);
 
-                let indicatorsContainer = document.createElement('div');
-                indicatorsContainer.className = 'indicators-container';
-                
-                if (trackerData[dateKey]) {
-                    if (trackerData[dateKey].regl) indicatorsContainer.innerHTML += '<span class="dot dot-regl"></span>';
-                    if (trackerData[dateKey].skincare) indicatorsContainer.innerHTML += '<span class="dot dot-skincare"></span>';
-                    if (trackerData[dateKey].laser) indicatorsContainer.innerHTML += '<span class="dot dot-laser"></span>';
-                }
-                cell.appendChild(indicatorsContainer);
+                let cellClass = 'day-cell';
+                if(isOvulation) cellClass += ' ovulation';
 
-                cell.onclick = function() {
-                    if (!trackerData[dateKey]) {
-                        trackerData[dateKey] = { regl: false, skincare: false, laser: false };
-                    }
-
-                    trackerData[dateKey][currentMode] = !trackerData[dateKey][currentMode];
-
-                    if (!trackerData[dateKey].regl && !trackerData[dateKey].skincare && !trackerData[dateKey].laser) {
-                        delete trackerData[dateKey];
-                    }
-
-                    if (trackerData[dateKey] && trackerData[dateKey][currentMode]) {
-                        confetti({ particleCount: 25, angle: 90, spread: 45, origin: { y: 0.85 } });
-                    }
-
-                    saveToStorage();
-                    renderCalendar();
-                };
-
-                grid.appendChild(cell);
+                grid.innerHTML += `
+                    <div class="${cellClass}" onclick="openModal('${dateKey}', '${year}-${month + 1}-${day}')">
+                        <span style="font-size: 0.8rem; font-weight: 700;">${day}</span>
+                        <div style="display: flex; gap: 4px;">
+                            ${isRegl ? '<span class="status-dot dot-regl"></span>' : ''}
+                            ${isOvulation ? '<span class="status-dot dot-ovulation"></span>' : ''}
+                        </div>
+                    </div>
+                `;
             }
+        };
+
+        function openModal(key, dateStr) {
+            activeKey = key;
+            document.getElementById('modalDate').innerText = dateStr;
+            document.getElementById('reglCheck').checked = !!window.glowData[key]?.regl;
+            document.getElementById('entryModal').style.display = 'flex';
         }
 
-        loadFromStorage();
-        renderCalendar();
+        function closeModal() { document.getElementById('entryModal').style.display = 'none'; }
+
+        function saveEntry() {
+            if(!window.glowData[activeKey]) window.glowData[activeKey] = {};
+            window.glowData[activeKey].regl = document.getElementById('reglCheck').checked;
+
+            if(window.db && window.dbSet) {
+                window.dbSet(window.dbRef(window.db, 'glowup_data'), window.glowData);
+            }
+            closeModal();
+            renderCalendar();
+        }
+
+        function downloadPDFReport() {
+            const element = document.getElementById('reportContent');
+            html2pdf().from(element).save(`GlowUp_Saglik_Raporu_${currentUser}.pdf`);
+        }
+
+        // Chart.js Entegrasyonu
+        const ctx = document.getElementById('cycleChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Mayıs', 'Haziran', 'Temmuz', 'Ağustos'],
+                datasets: [{
+                    label: 'Döngü Süresi (Gün)',
+                    data: [28, 29, 27, 28],
+                    borderColor: '#ff4d8d',
+                    tension: 0.4
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
+
+        window.renderCalendar();
     </script>
 </body>
 </html>
