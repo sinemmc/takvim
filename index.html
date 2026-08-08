@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlowUp Club OS — Smart Health & Beauty</title>
+    <title>GlowUp Club OS — Pro V3 Edition</title>
     
-    <!-- PWA & Mobil App -->
+    <!-- PWA & Mobil App Metadata -->
     <meta name="theme-color" content="#ff4d8d">
     <link rel="manifest" href="data:application/manifest+json,{'name':'GlowUp Club','short_name':'GlowUp','start_url':'.','display':'standalone'}">
 
-    <!-- Fonts, Charts, Icons & Effects -->
+    <!-- Fonts, Icons, Confetti & HTML2Canvas -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,400&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -57,7 +57,21 @@
 
         .container { max-width: 1140px; margin: 30px auto; padding: 0 20px 60px 20px; }
 
-        /* Kızların Kimlik Yüzü & Profil Seçici */
+        /* PWA Install Banner */
+        .pwa-banner {
+            background: var(--primary-soft); border: 1px solid var(--border-color);
+            padding: 12px 20px; border-radius: 50px; margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center; gap: 12px;
+        }
+
+        /* Drama Alert Banner */
+        .alert-banner {
+            background: linear-gradient(135deg, rgba(255,77,141,0.2), rgba(138,43,226,0.2));
+            border-left: 5px solid var(--primary); padding: 16px 20px; border-radius: var(--radius-md);
+            margin-bottom: 24px; display: flex; align-items: center; gap: 12px; font-weight: 600;
+        }
+
+        /* Identity Card */
         .identity-card {
             background: var(--panel-bg); backdrop-filter: blur(16px);
             border-radius: var(--radius-xl); padding: 24px; border: 1px solid var(--border-color);
@@ -70,17 +84,15 @@
             padding: 10px 20px; border-radius: 40px; border: 2px solid transparent; background: rgba(255,255,255,0.5);
             font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px;
         }
-
         .user-btn.active { background: var(--primary); color: white !important; border-color: var(--primary); }
 
         .avatar-badge {
             display: flex; align-items: center; gap: 16px; background: var(--primary-soft);
             padding: 12px 20px; border-radius: 50px; border: 1px solid var(--border-color);
         }
-
         .avatar-img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
 
-        /* Mod Seçiciler */
+        /* Tracker Modes & Dashboard */
         .tracker-modes { display: flex; gap: 10px; margin-bottom: 20px; }
         .mode-chip {
             flex: 1; padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color);
@@ -89,13 +101,12 @@
         }
         .mode-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* Dashboard Düzeni */
         .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 36px; }
         @media(max-width: 900px) { .dashboard-grid { grid-template-columns: 1fr; } }
 
         .card { background: var(--panel-bg); backdrop-filter: blur(16px); border-radius: var(--radius-xl); padding: 28px; border: 1px solid var(--border-color); box-shadow: var(--shadow-glow); }
 
-        /* Takvim */
+        /* Calendar */
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
         .day-label { text-align: center; font-size: 0.75rem; font-weight: 800; color: var(--text-sub); text-transform: uppercase; margin-bottom: 6px; }
         
@@ -111,30 +122,12 @@
         .dot-skincare { background: #00bbf9; }
         .dot-laser { background: #8a2be2; }
 
-        /* Günlük Tavsiye Kutus */
-        .advice-box { background: var(--primary-soft); border-left: 4px solid var(--primary); padding: 16px; border-radius: var(--radius-md); margin-top: 16px; font-size: 0.85rem; }
-
-        /* Mizah Banner */
-        .humor-card {
-            background: linear-gradient(135deg, var(--primary-soft), transparent);
-            border-radius: var(--radius-xl); padding: 24px; border: 1px solid var(--border-color);
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 36px;
-        }
-
         .btn-action { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 700; cursor: pointer; }
         .btn-action:hover { opacity: 0.9; transform: scale(1.02); }
 
-        /* Makaleler */
-        .articles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 36px; }
-        .article-card { background: var(--panel-bg); border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--border-color); }
-        .article-img { width: 100%; height: 160px; object-fit: cover; }
-        .article-body { padding: 20px; }
-
-        /* Anayasa & Pano */
-        .rules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+        /* Notes & Rules */
+        .rules-grid, .notes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
         .rule-item { background: var(--primary-soft); padding: 14px; border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 600; }
-
-        .notes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 16px; }
         .note-card { background: var(--panel-bg); padding: 16px; border-radius: var(--radius-md); border-left: 4px solid var(--primary); border: 1px solid var(--border-color); }
 
         footer { text-align: center; padding: 30px; color: var(--text-sub); font-size: 0.85rem; }
@@ -151,7 +144,19 @@
 
     <div class="container">
 
-        <!-- KIMLIK YÜZÜ VE KULLANICI DEĞİŞTİRİCİ -->
+        <!-- PWA INSTALL BANNER -->
+        <div class="pwa-banner" id="pwaBanner" style="display: none;">
+            <div style="font-size: 0.85rem; font-weight: 700;">📲 GlowUp OS'u telefonuna mobil uygulama olarak yükle!</div>
+            <button class="btn-action" style="padding: 6px 16px; font-size: 0.8rem;" id="installBtn">Yükle</button>
+        </div>
+
+        <!-- DRAMA ALERT BANNER -->
+        <div class="alert-banner" id="dramaAlert">
+            <i data-lucide="bell-ring" style="color: var(--primary);"></i>
+            <span id="alertText">🌸 Canlı Bildirim: Tüm üyelerin döngüleri stabil seyrediyor.</span>
+        </div>
+
+        <!-- USER IDENTITY -->
         <div class="identity-card">
             <div>
                 <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-sub); letter-spacing: 1px;">AKTİF ÜYE KİMLİĞİ</div>
@@ -172,20 +177,9 @@
             </div>
         </div>
 
-        <!-- MİZAH BANNER & KAOS ÇARKI -->
-        <div class="humor-card">
-            <div>
-                <span style="font-size: 0.75rem; font-weight: 800; color: var(--primary);">HORMON TAHMİN MOTORU 🧬</span>
-                <div style="font-size: 1rem; font-weight: 700; margin-top: 4px;" id="humorText">"Luteal Evre: Tatlı krizleri ve durduk yere gelen ağlama istekleri aktif."</div>
-            </div>
-            <button class="btn-action" onclick="spinChaos()">🎲 Günün Kaosunu Çek</button>
-        </div>
-
-        <!-- ANA DASHBOARD -->
+        <!-- MAIN DASHBOARD -->
         <div class="dashboard-grid">
-            
             <div class="card">
-                <!-- Mod Seçiciler -->
                 <div class="tracker-modes">
                     <div class="mode-chip active" id="mode-regl" onclick="setMode('regl')"><i data-lucide="droplet"></i> Adet Döngüsü</div>
                     <div class="mode-chip" id="mode-skincare" onclick="setMode('skincare')"><i data-lucide="sparkles"></i> Cilt Bakımı</div>
@@ -203,71 +197,28 @@
                     <div class="day-label">Per</div><div class="day-label">Cum</div><div class="day-label">Cmt</div><div class="day-label">Paz</div>
                 </div>
                 <div class="calendar-grid" id="calendarDays" style="margin-top: 8px;"></div>
-
-                <!-- Günlük Akıllı Tavsiye Motoru -->
-                <div class="advice-box" id="dailyAdvice">
-                    💡 <strong>Akıllı Öneri:</strong> Adet döngünüzün 1. günündesiniz. Yüksek yoğunluklu kardiyo yerine hafif yürüyüş ve Magnezyum takviyesi önerilir.
-                </div>
             </div>
 
-            <!-- Sağ Taraf: Analitik Grafiği -->
+            <!-- ANALYTICS & STORY GENERATOR -->
             <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
                 <div>
                     <h3 style="margin-top: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
-                        <i data-lucide="activity" style="color: var(--primary);"></i> Döngü & Hormon Analizi
+                        <i data-lucide="activity" style="color: var(--primary);"></i> Döngü Analizi
                     </h3>
-                    <p style="font-size: 0.85rem; color: var(--text-sub);">Son 4 ayın ortalama döngüsü: <strong>28.5 Gün</strong></p>
-                    <div style="height: 200px; width: 100%;">
+                    <div style="height: 180px; width: 100%;">
                         <canvas id="cycleChart"></canvas>
                     </div>
                 </div>
-            </div>
 
-        </div>
-
-        <!-- MAKALELER & MEDİKAL REHBER -->
-        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 16px;">Uzman & Medikal Rehber 📖</h3>
-        <div class="articles-grid">
-            <div class="article-card">
-                <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500" class="article-img" alt="Sancı">
-                <div class="article-body">
-                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--primary);">ACOG MEDİKAL KAYNAKLI</span>
-                    <h4 style="margin: 6px 0;">Sancıları Kesen 3 Hücresel Yöntem</h4>
-                    <p style="font-size: 0.8rem; color: var(--text-sub); line-height: 1.5;">Kas kasılmalarını engellemek için Magnezyum Bisglisinat ve alt karın bölgesine sıcak kompres desteği inflamasyonu hücresel bazda azaltır.</p>
-                </div>
-            </div>
-
-            <div class="article-card">
-                <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500" class="article-img" alt="Medikal">
-                <div class="article-body">
-                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--primary);">DERMATOLOJİ REHBERİ</span>
-                    <h4 style="margin: 6px 0;">Lazer & BHA/AHA Asit İkazı</h4>
-                    <p style="font-size: 0.8rem; color: var(--text-sub); line-height: 1.5;">Salisilik ve Glikolik asitler cildi hassaslaştırır. Lazer seansından en az 5 gün önce tüm asitli serumları durdurmalısınız.</p>
-                </div>
-            </div>
-
-            <div class="article-card">
-                <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=500" class="article-img" alt="Cilt">
-                <div class="article-body">
-                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--primary);">HORMONAL CİLT CARE</span>
-                    <h4 style="margin: 6px 0;">Luteal Evrede Cilt Bakımı</h4>
-                    <p style="font-size: 0.8rem; color: var(--text-sub); line-height: 1.5;">Artan progesteron yağ üretimini tetikler. Bu dönemde ağır yağlar yerine Niacinamide ve Su bazlı nemlendiricilere geçin.</p>
+                <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+                    <button class="btn-action" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="generateStoryCard()">
+                        <i data-lucide="instagram"></i> Instagram Story Raporu Al
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- KIZLAR KULÜBÜ ANAYASASI -->
-        <div class="card" style="margin-bottom: 36px;">
-            <h3 style="margin-top: 0; font-family: 'Playfair Display', serif;">💅 Kızlar Kulübü Anayasası</h3>
-            <div class="rules-grid">
-                <div class="rule-item">Madde 1: Regl olan üyeye çikolata/tatlı siparişi vermek gruptakilerin sorumluluğundadır.</div>
-                <div class="rule-item">Madde 2: Lazer seansı günü BHA asitli serum kullanan gruptan 1 gün uzaklaştırılır!</div>
-                <div class="rule-item">Madde 3: Ex-sevgiliye atılacak mesajlar önce gruptan onay almalıdır.</div>
-                <div class="rule-item">Madde 4: Güneş kremi sürmeden dışarı çıkan GlowUp haklarından mahrum edilir ☀️</div>
-            </div>
-        </div>
-
-        <!-- ORTAK PANO -->
+        <!-- PANO & NOTLAR -->
         <div class="card">
             <h3 style="margin-top: 0; font-family: 'Playfair Display', serif;">📌 Kızlar Ortak Not Panosu</h3>
             <div style="display: flex; gap: 10px; margin-top: 12px;">
@@ -279,28 +230,40 @@
 
     </div>
 
-    <footer>GlowUp Club OS © 2026 — Ceylin, Hatice, Sinem & Sena ✨</footer>
+    <!-- GİZLİ CANVAS (STORY OLUŞTURUCU İÇİN) -->
+    <canvas id="storyCanvas" width="1080" height="1920" style="display: none;"></canvas>
+
+    <footer>GlowUp Club OS © 2026 — Pro V3 Edition ✨</footer>
 
     <script>
-        // LocalStorage Tabanlı Güvenli Veri Yönetimi
         let currentUser = 'Ceylin';
         let activeMode = 'regl';
         let currentDate = new Date();
         
-        let trackerData = JSON.parse(localStorage.getItem('glowup_tracker_v2')) || {};
-        let notesData = JSON.parse(localStorage.getItem('glowup_notes_v2')) || [
-            { user: 'Sena', text: 'Kızlar akşam kahveye kimler geliyor? ☕' },
-            { user: 'Hatice', text: 'Lazerden geldim kızlar asitli serum sürmeyin uyarısı yapıyorum!' }
+        let trackerData = JSON.parse(localStorage.getItem('glowup_tracker_v3')) || {};
+        let notesData = JSON.parse(localStorage.getItem('glowup_notes_v3')) || [
+            { user: 'Sena', text: 'Kızlar akşam kahveye kimler geliyor? ☕' }
         ];
 
         const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+        const userRoles = { 'Ceylin': 'VIP Drama Kraliçesi', 'Hatice': 'Estetik & Cilt Gurusu', 'Sinem': 'Fitness Koçu', 'Sena': 'Astroloji Lideri' };
 
-        const userRoles = {
-            'Ceylin': 'VIP Drama Kraliçesi',
-            'Hatice': 'Estetik & Cilt Gurusu',
-            'Sinem': 'Fitness & Wellness Koçu',
-            'Sena': 'Astroloji & Kaos Lideri'
-        };
+        // PWA Kurulum Entegrasyonu
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('pwaBanner').style.display = 'flex';
+        });
+
+        document.getElementById('installBtn')?.addEventListener('click', () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => {
+                    document.getElementById('pwaBanner').style.display = 'none';
+                });
+            }
+        });
 
         function toggleTheme() {
             const isDark = document.body.getAttribute('data-theme') === 'dark';
@@ -321,6 +284,7 @@
             document.getElementById('userRole').innerText = userRoles[name];
             document.getElementById('userAvatar').src = avatar;
 
+            checkDramaAlerts();
             renderCalendar();
         }
 
@@ -328,13 +292,6 @@
             activeMode = mode;
             document.querySelectorAll('.mode-chip').forEach(c => c.classList.remove('active'));
             document.getElementById(`mode-${mode}`).classList.add('active');
-            
-            const adviceMap = {
-                'regl': '💡 <strong>Adet Modu:</strong> Magnezyum Bisglisinat takviyesi ve sıcak su kompresi kasılmaları hafifletir.',
-                'skincare': '🧴 <strong>Cilt Modu:</strong> Luteal evrede yağlanma artar; Salisilik asit (BHA) ve Niacinamide tercih edin.',
-                'laser': '⚡ <strong>Lazer Modu:</strong> Seans tarihinden 5 gün önce asitli serum kullanımını kesmeyi unutmayın!'
-            };
-            document.getElementById('dailyAdvice').innerHTML = adviceMap[mode];
         }
 
         function changeMonth(dir) {
@@ -380,21 +337,71 @@
             trackerData[key][activeMode] = !trackerData[key][activeMode];
 
             if(trackerData[key][activeMode]) {
-                confetti({ particleCount: 20, spread: 40, origin: { y: 0.8 } });
+                confetti({ particleCount: 25, spread: 50, origin: { y: 0.8 } });
             }
 
-            localStorage.setItem('glowup_tracker_v2', JSON.stringify(trackerData));
+            localStorage.setItem('glowup_tracker_v3', JSON.stringify(trackerData));
+            checkDramaAlerts();
             renderCalendar();
         }
 
-        function spinChaos() {
-            const chaosList = [
-                "Aniden eski sevgilinin ablasının Instagram hikayesine bakarken yakalandın 💀",
-                "Saçını kestirme krizin geldi, acil gruba fotoğraf at!",
-                "Sırf ambalajı çok tatlı diye 1500 TL'lik bir nemlendirici aldın 🧴",
-                "Gruba 'Çok acil bakın' yazıp sadece kahve fotoğrafı attın ☕"
-            ];
-            alert(`🎲 ${currentUser} için Günün Kaosu:\n\n"${chaosList[Math.floor(Math.random()*chaosList.length)]}"`);
+        // DRAMA ALERT MOTORU
+        function checkDramaAlerts() {
+            const today = new Date();
+            const todayKey = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}_${currentUser}`;
+            const alertBox = document.getElementById('alertText');
+
+            if(trackerData[todayKey]?.regl) {
+                alertBox.innerHTML = `🌸 <strong>DRAMA ALERT:</strong> ${currentUser} bugün regl döngüsünün 1. gününde! Diğer kızlar tatlı siparişlerini hazırlasın 🍫`;
+            } else if(trackerData[todayKey]?.laser) {
+                alertBox.innerHTML = `⚡ <strong>LAZER UYARISI:</strong> ${currentUser} bugün lazer seansında! Cildine asitli serum sürülmesine izin vermeyin!`;
+            } else {
+                alertBox.innerHTML = `✨ <strong>Kulüp Modu:</strong> ${currentUser} için bugün cilt ve enerji dengesi harika görünüyor!`;
+            }
+        }
+
+        // INSTAGRAM STORY CARD GENERATOR (CANVAS)
+        function generateStoryCard() {
+            const canvas = document.getElementById('storyCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Arka plan gradyanı
+            const grad = ctx.createLinearGradient(0, 0, 1080, 1920);
+            grad.addColorStop(0, '#ff4d8d');
+            grad.addColorStop(1, '#8a2be2');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 1080, 1920);
+
+            // Kart Beyaz Paneli
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.roundRect(80, 200, 920, 1520, 40);
+            ctx.fill();
+
+            // Metinler
+            ctx.fillStyle = '#1e1b1d';
+            ctx.font = 'bold 60px "Playfair Display", serif';
+            ctx.fillText('GLOWUP MONTHLY REPORT', 140, 320);
+
+            ctx.fillStyle = '#ff4d8d';
+            ctx.font = 'bold 45px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText(`Üye: ${currentUser}`, 140, 420);
+
+            ctx.fillStyle = '#786871';
+            ctx.font = '35px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText(`Ay: ${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`, 140, 480);
+
+            ctx.fillStyle = '#1e1b1d';
+            ctx.font = 'bold 40px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('✨ Bu Ayın Öne Çıkanları:', 140, 620);
+            ctx.fillText('• 1 Adet Düngüsü Tamamlandı 🌸', 160, 720);
+            ctx.fillText('• 4 Cilt Bakımı Rutini Yapıldı 🧴', 160, 800);
+            ctx.fillText('• 1 Lazer Seansı Bitti ⚡', 160, 880);
+
+            // Indirme Linki Oluştur
+            const link = document.createElement('a');
+            link.download = `${currentUser}-GlowUp-Story.png`;
+            link.href = canvas.toDataURL();
+            link.click();
         }
 
         function renderNotes() {
@@ -414,28 +421,23 @@
             const input = document.getElementById('noteInput');
             if(!input.value.trim()) return;
             notesData.push({ user: currentUser, text: input.value.trim() });
-            localStorage.setItem('glowup_notes_v2', JSON.stringify(notesData));
+            localStorage.setItem('glowup_notes_v3', JSON.stringify(notesData));
             input.value = '';
             renderNotes();
         }
 
-        // Sayfa Yüklendiğinde Başlatıcılar
         window.onload = function() {
             lucide.createIcons();
             renderCalendar();
             renderNotes();
+            checkDramaAlerts();
 
             const ctx = document.getElementById('cycleChart').getContext('2d');
             new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: ['Mayıs', 'Haziran', 'Temmuz', 'Ağustos'],
-                    datasets: [{
-                        label: 'Döngü Süresi',
-                        data: [28, 29, 28, 29],
-                        borderColor: '#ff4d8d',
-                        tension: 0.4
-                    }]
+                    datasets: [{ label: 'Döngü', data: [28, 29, 28, 29], borderColor: '#ff4d8d', tension: 0.4 }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
